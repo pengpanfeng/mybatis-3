@@ -48,13 +48,15 @@ public class LruCache implements Cache {
   }
 
   public void setSize(final int size) {
+    // 初始化 keyMap，注意，keyMap 的类型继承自 LinkedHashMap，并覆盖了 removeEldestEntry 方法
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
-
+      // 覆盖 LinkedHashMap 的 removeEldestEntry 方法
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
         if (tooBig) {
+          // 获取将要被移除缓存项的键值
           eldestKey = eldest.getKey();
         }
         return tooBig;
@@ -64,13 +66,16 @@ public class LruCache implements Cache {
 
   @Override
   public void putObject(Object key, Object value) {
+    // 存储缓存项
     delegate.putObject(key, value);
     cycleKeyList(key);
   }
 
   @Override
   public Object getObject(Object key) {
+    // 刷新 key 在 keyMap 中的位置
     keyMap.get(key); //touch
+    // 从被装饰类中获取相应缓存项
     return delegate.getObject(key);
   }
 
@@ -81,6 +86,7 @@ public class LruCache implements Cache {
 
   @Override
   public void clear() {
+    // 从被装饰类中移除相应的缓存项
     delegate.clear();
     keyMap.clear();
   }
@@ -91,8 +97,10 @@ public class LruCache implements Cache {
   }
 
   private void cycleKeyList(Object key) {
+    // 存储 key 到 keyMap 中
     keyMap.put(key, key);
     if (eldestKey != null) {
+      // 从被装饰类中移除相应的缓存项
       delegate.removeObject(eldestKey);
       eldestKey = null;
     }

@@ -55,6 +55,7 @@ public class FolderMapperTest {
 
     String resource = "org/apache/ibatis/submitted/association_nested/mybatis-config.xml";
     try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
+      
       SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
       try (SqlSession session = sqlSessionFactory.openSession()) {
         FolderMapper postMapper = session.getMapper(FolderMapper.class);

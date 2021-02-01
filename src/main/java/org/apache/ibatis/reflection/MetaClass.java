@@ -40,6 +40,8 @@ public class MetaClass {
   }
 
   public static MetaClass forClass(Class<?> type, ReflectorFactory reflectorFactory) {
+    // 调用构造方法
+    //通过reflectorFactory获取type原数据，用与MetaClass检查和获取type的原数据
     return new MetaClass(type, reflectorFactory);
   }
 
@@ -54,6 +56,10 @@ public class MetaClass {
   }
 
   public String findProperty(String name, boolean useCamelCaseMapping) {
+    /**
+     * 检查type的class中是否存在name属性，
+     * useCamelCaseMapping是否进行驼峰转换
+     */
     if (useCamelCaseMapping) {
       name = name.replace("_", "");
     }
@@ -61,10 +67,12 @@ public class MetaClass {
   }
 
   public String[] getGetterNames() {
+    //获取type元数据所有的get方法名称
     return reflector.getGetablePropertyNames();
   }
 
   public String[] getSetterNames() {
+    //获取type元数据所有的set方法名称
     return reflector.getSetablePropertyNames();
   }
 

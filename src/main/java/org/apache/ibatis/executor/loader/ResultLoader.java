@@ -67,7 +67,9 @@ public class ResultLoader {
   }
 
   public Object loadResult() throws SQLException {
+    // 执行关联查询
     List<Object> list = selectList();
+    // 抽取结果
     resultObject = resultExtractor.extractObjectFromList(list, targetType);
     return resultObject;
   }
@@ -78,6 +80,7 @@ public class ResultLoader {
       localExecutor = newExecutor();
     }
     try {
+      // 通过 Executor 就行查询，这个之前已经分析过了
       return localExecutor.<E> query(mappedStatement, parameterObject, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, cacheKey, boundSql);
     } finally {
       if (localExecutor != executor) {

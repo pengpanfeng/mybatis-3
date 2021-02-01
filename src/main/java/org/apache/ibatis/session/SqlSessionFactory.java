@@ -22,8 +22,16 @@ import java.sql.Connection;
  *
  * @author Clinton Begin
  */
+
+/**
+ * SqlSession创建者工厂
+ */
 public interface SqlSessionFactory {
 
+  /**
+   * 创建SqlSession
+   * @return
+   */
   SqlSession openSession();
 
   SqlSession openSession(boolean autoCommit);

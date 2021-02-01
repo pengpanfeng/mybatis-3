@@ -44,6 +44,7 @@ public class ResultMapResolver {
   }
 
   public ResultMap resolve() {
+    //委托assistant构建ResultMap对象
     return assistant.addResultMap(this.id, this.type, this.extend, this.discriminator, this.resultMappings, this.autoMapping);
   }
 

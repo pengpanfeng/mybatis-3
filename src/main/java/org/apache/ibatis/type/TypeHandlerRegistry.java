@@ -317,17 +317,21 @@ public final class TypeHandlerRegistry {
   @SuppressWarnings("unchecked")
   public <T> void register(TypeHandler<T> typeHandler) {
     boolean mappedTypeFound = false;
+    // 获取 @MappedTypes
     MappedTypes mappedTypes = typeHandler.getClass().getAnnotation(MappedTypes.class);
     if (mappedTypes != null) {
       for (Class<?> handledType : mappedTypes.value()) {
+        // 调用中间方法 register(Type, TypeHandler)
         register(handledType, typeHandler);
         mappedTypeFound = true;
       }
     }
     // @since 3.1.0 - try to auto-discover the mapped type
+    // 自动发现映射类型
     if (!mappedTypeFound && typeHandler instanceof TypeReference) {
       try {
         TypeReference<T> typeReference = (TypeReference<T>) typeHandler;
+        // 获取参数模板中的参数类型，并调用中间方法 register(Type, TypeHandler)
         register(typeReference.getRawType(), typeHandler);
         mappedTypeFound = true;
       } catch (Throwable t) {
@@ -335,6 +339,7 @@ public final class TypeHandlerRegistry {
       }
     }
     if (!mappedTypeFound) {
+      // 调用中间方法 register(Class, TypeHandler)
       register((Class<T>) null, typeHandler);
     }
   }
@@ -342,19 +347,24 @@ public final class TypeHandlerRegistry {
   // java type + handler
 
   public <T> void register(Class<T> javaType, TypeHandler<? extends T> typeHandler) {
+    // 调用中间方法 register(Type, TypeHandler)
     register((Type) javaType, typeHandler);
   }
 
   private <T> void register(Type javaType, TypeHandler<? extends T> typeHandler) {
+    //获取MappedJdbcTypes注解
     MappedJdbcTypes mappedJdbcTypes = typeHandler.getClass().getAnnotation(MappedJdbcTypes.class);
     if (mappedJdbcTypes != null) {
       for (JdbcType handledJdbcType : mappedJdbcTypes.value()) {
+        // 调用中间方法  register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler)
         register(javaType, handledJdbcType, typeHandler);
       }
       if (mappedJdbcTypes.includeNullJdbcType()) {
+        // 调用中间方法  register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler)
         register(javaType, null, typeHandler);
       }
     } else {
+      // 调用中间方法 register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler)
       register(javaType, null, typeHandler);
     }
   }
@@ -371,13 +381,16 @@ public final class TypeHandlerRegistry {
 
   private void register(Type javaType, JdbcType jdbcType, TypeHandler<?> handler) {
     if (javaType != null) {
+      // JdbcType 到 TypeHandler 的映射
       Map<JdbcType, TypeHandler<?>> map = TYPE_HANDLER_MAP.get(javaType);
       if (map == null || map == NULL_TYPE_HANDLER_MAP) {
         map = new HashMap<>();
+        // 存储 javaType 到 Map<JdbcType, TypeHandler> 的映射
         TYPE_HANDLER_MAP.put(javaType, map);
       }
       map.put(jdbcType, handler);
     }
+    // 存储所有的 TypeHandler
     ALL_TYPE_HANDLERS_MAP.put(handler.getClass(), handler);
   }
 
@@ -389,14 +402,18 @@ public final class TypeHandlerRegistry {
 
   public void register(Class<?> typeHandlerClass) {
     boolean mappedTypeFound = false;
+    // 获取 @MappedTypes 注解
     MappedTypes mappedTypes = typeHandlerClass.getAnnotation(MappedTypes.class);
     if (mappedTypes != null) {
+      // 遍历 @MappedTypes 注解中配置的值
       for (Class<?> javaTypeClass : mappedTypes.value()) {
+        // 调用注册方法
         register(javaTypeClass, typeHandlerClass);
         mappedTypeFound = true;
       }
     }
     if (!mappedTypeFound) {
+      // 调用中间方法 register(TypeHandler)
       register(getInstance(null, typeHandlerClass));
     }
   }
@@ -443,11 +460,14 @@ public final class TypeHandlerRegistry {
 
   public void register(String packageName) {
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
+    // 从指定包中查找 TypeHandler
     resolverUtil.find(new ResolverUtil.IsA(TypeHandler.class), packageName);
     Set<Class<? extends Class<?>>> handlerSet = resolverUtil.getClasses();
     for (Class<?> type : handlerSet) {
       //Ignore inner classes and interfaces (including package-info.java) and abstract classes
+      // 忽略内部类，接口，抽象类等
       if (!type.isAnonymousClass() && !type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+        // 调用注册方法
         register(type);
       }
     }

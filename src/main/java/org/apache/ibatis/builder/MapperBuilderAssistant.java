@@ -88,6 +88,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
     if (isReference) {
       // is it qualified with any namespace yet?
+      //检查命名空间是否合法
       if (base.contains(".")) {
         return base;
       }
@@ -109,10 +110,19 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
     try {
       unresolvedCacheRef = true;
+      // 根据命名空间从全局配置对象（Configuration）中查找相应的缓存实例
       Cache cache = configuration.getCache(namespace);
+      /**
+       * 若未查找到缓存实例，此处抛出异常。这里存在两种情况导致未查找到
+       * cache 实例，分别如下：
+       * 1.使用者在 <cache-ref> 中配置了一个不存在的命名空间，
+       * 导致无法找到 cache 实例
+       * 2.使用者所引用的缓存实例还未创建
+       */
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
       }
+      // 设置 cache 为当前使用缓存
       currentCache = cache;
       unresolvedCacheRef = false;
       return cache;
@@ -128,6 +138,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       boolean readWrite,
       boolean blocking,
       Properties props) {
+    // 使用建造模式构建缓存实例
     Cache cache = new CacheBuilder(currentNamespace)
         .implementation(valueOrDefault(typeClass, PerpetualCache.class))
         .addDecorator(valueOrDefault(evictionClass, LruCache.class))
@@ -137,7 +148,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
+    // 添加缓存到 Configuration 对象中
     configuration.addCache(cache);
+    // 设置 currentCache 遍历，即当前使用的缓存
     currentCache = cache;
     return cache;
   }
@@ -180,6 +193,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       Discriminator discriminator,
       List<ResultMapping> resultMappings,
       Boolean autoMapping) {
+    // 为 ResultMap 的 id 和 extend 属性值拼接命名空间
     id = applyCurrentNamespace(id, false);
     extend = applyCurrentNamespace(extend, true);
 
@@ -189,15 +203,22 @@ public class MapperBuilderAssistant extends BaseBuilder {
       }
       ResultMap resultMap = configuration.getResultMap(extend);
       List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
+      // 为拓展 ResultMappings 取出重复项
       extendedResultMappings.removeAll(resultMappings);
       // Remove parent constructor if this resultMap declares a constructor.
       boolean declaresConstructor = false;
+      //判断是否配置文件中是否申明ResultFlag.CONSTRUCTOR
       for (ResultMapping resultMapping : resultMappings) {
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
           declaresConstructor = true;
           break;
         }
       }
+      /**
+       *  移除构造方法生成的ResultMapping
+       *  如果当前 <resultMap> 节点中包含 <constructor> 子节点，
+       *  则将拓展 ResultMapping 集合中的包含 CONSTRUCTOR 标志的元素移除
+       */
       if (declaresConstructor) {
         Iterator<ResultMapping> extendedResultMappingsIter = extendedResultMappings.iterator();
         while (extendedResultMappingsIter.hasNext()) {
@@ -206,11 +227,18 @@ public class MapperBuilderAssistant extends BaseBuilder {
           }
         }
       }
+      // 将扩展 resultMappings 集合合并到当前 resultMappings 集合中
       resultMappings.addAll(extendedResultMappings);
     }
+    /**
+     * 通过构建者模式构建ResultMap
+     */
     ResultMap resultMap = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping)
         .discriminator(discriminator)
         .build();
+    /**
+     * 将构建生成的resultMap注册到resultMaps容器中
+     */
     configuration.addResultMap(resultMap);
     return resultMap;
   }
@@ -274,7 +302,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
     id = applyCurrentNamespace(id, false);
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
-
+  // 创建建造器，设置各种属性
     MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
         .resource(resource)
         .fetchSize(fetchSize)
@@ -292,13 +320,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .flushCacheRequired(valueOrDefault(flushCache, !isSelect))
         .useCache(valueOrDefault(useCache, isSelect))
         .cache(currentCache);
-
+    // 获取或创建 ParameterMap
     ParameterMap statementParameterMap = getStatementParameterMap(parameterMap, parameterType, id);
     if (statementParameterMap != null) {
       statementBuilder.parameterMap(statementParameterMap);
     }
 
     MappedStatement statement = statementBuilder.build();
+    // 添加 MappedStatement 到 configuration 的 mappedStatements 集合中
     configuration.addMappedStatement(statement);
     return statement;
   }
@@ -374,8 +403,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String foreignColumn,
       boolean lazy) {
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+    // 解析 TypeHandler
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
     List<ResultMapping> composites = parseCompositeColumnName(column);
+    // 通过建造模式构建 ResultMapping
     return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
         .jdbcType(jdbcType)
         .nestedQueryId(applyCurrentNamespace(nestedSelect, true))

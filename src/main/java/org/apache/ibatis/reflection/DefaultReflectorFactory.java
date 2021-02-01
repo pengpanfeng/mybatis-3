@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DefaultReflectorFactory implements ReflectorFactory {
   private boolean classCacheEnabled = true;
+  /** 目标类和反射器映射缓存 */
   private final ConcurrentMap<Class<?>, Reflector> reflectorMap = new ConcurrentHashMap<>();
 
   public DefaultReflectorFactory() {
@@ -37,10 +38,13 @@ public class DefaultReflectorFactory implements ReflectorFactory {
 
   @Override
   public Reflector findForClass(Class<?> type) {
+    // classCacheEnabled 默认为 true
     if (classCacheEnabled) {
-            // synchronized (type) removed see issue #461
+      // synchronized (type) removed see issue #461
+      // 将 <type, cached> 映射缓存到 map 中，方便下次取用
       return reflectorMap.computeIfAbsent(type, Reflector::new);
     } else {
+      // 创建一个新的 Reflector 实例
       return new Reflector(type);
     }
   }

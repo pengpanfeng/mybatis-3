@@ -44,6 +44,9 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
   @Override
   public SqlSession openSession() {
+    /*
+      创建从数据源创建SqlSession
+     */
     return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
   }
 
@@ -87,13 +90,37 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**
+   * 通过事务级别创建 DefaultSqlSession
+   * @param execType
+   * @param level
+   * @param autoCommit
+   * @return
+   */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
+      /**
+       *  获取Environment
+       *      -> transactionFactory
+       *      -> dataSource
+       *
+       */
+
       final Environment environment = configuration.getEnvironment();
+      /**
+       * 获取事务工厂
+       */
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      /**
+       * 创建执行器，用于操作将转换sql、操作数据库、将结果集转换为实体对象
+       * SimpleExecutor 默认创建执行器
+       * BatchExecutor
+       * ReuseExecutor
+       */
       final Executor executor = configuration.newExecutor(tx, execType);
+      //创建DefaultSqlSession对象
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
       closeTransaction(tx); // may have fetched a connection so lets call close()
@@ -126,6 +153,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   }
 
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
+    /**
+     * 配置文件中如果配置配置了TransactionFactory则去用户配置的，否则创建ManagedTransactionFactory工厂
+     *
+     *其中Configuration.typeAliasRegistry已经注册TransactionFactory的别名
+     * MANAGED -> ManagedTransactionFactory
+     * JDBC -> JdbcTransactionFactory
+     */
     if (environment == null || environment.getTransactionFactory() == null) {
       return new ManagedTransactionFactory();
     }

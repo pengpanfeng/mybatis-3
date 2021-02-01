@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-       Copyright 2009-2016 the original author or authors.
+       Copyright 2009-2021 the original author or authors.
 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@
     <coverSubTitle>v. ${project.version}</coverSubTitle>
     <coverType>User Guide</coverType>
     <projectName>${project.name}</projectName>
-    <projectLogo>http://mybatis.github.io/images/mybatis-logo.png</projectLogo>
+<!--    <projectLogo>http://mybatis.github.io/images/mybatis-logo.png</projectLogo>-->
     <companyName>${project.organization.name}</companyName>
   </cover>
 </document>

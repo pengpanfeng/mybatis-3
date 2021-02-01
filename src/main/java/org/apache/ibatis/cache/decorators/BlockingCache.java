@@ -58,17 +58,22 @@ public class BlockingCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     try {
+      // 存储缓存项
       delegate.putObject(key, value);
     } finally {
+      // 释放锁
       releaseLock(key);
     }
   }
 
   @Override
   public Object getObject(Object key) {
+    // 请求锁
     acquireLock(key);
     Object value = delegate.getObject(key);
+    // 若缓存命中，则释放锁。需要注意的是，未命中则不释放锁
     if (value != null) {
+      // 释放锁
       releaseLock(key);
     }
     return value;
@@ -77,6 +82,7 @@ public class BlockingCache implements Cache {
   @Override
   public Object removeObject(Object key) {
     // despite of its name, this method is called only to release locks
+    // 释放锁
     releaseLock(key);
     return null;
   }
@@ -92,6 +98,7 @@ public class BlockingCache implements Cache {
   }
 
   private ReentrantLock getLockForKey(Object key) {
+
     return locks.computeIfAbsent(key, k -> new ReentrantLock());
   }
 
@@ -99,6 +106,7 @@ public class BlockingCache implements Cache {
     Lock lock = getLockForKey(key);
     if (timeout > 0) {
       try {
+        // 尝试加锁
         boolean acquired = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
         if (!acquired) {
           throw new CacheException("Couldn't get a lock in " + timeout + " for the key " +  key + " at the cache " + delegate.getId());
@@ -107,6 +115,7 @@ public class BlockingCache implements Cache {
         throw new CacheException("Got interrupted while trying to acquire lock for key " + key, e);
       }
     } else {
+      // 加锁
       lock.lock();
     }
   }

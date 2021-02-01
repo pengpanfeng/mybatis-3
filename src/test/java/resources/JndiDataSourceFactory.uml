@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.ibatis.datasource.jndi.JndiDataSourceFactory</OriginalElement>
+  <nodes>
+    <node x="501.25" y="80.0">java.lang.Throwable</node>
+    <node x="392.84999999999997" y="799.0">org.apache.ibatis.exceptions.PersistenceException</node>
+    <node x="1330.5" y="160.0">org.apache.ibatis.datasource.pooled.PooledDataSource</node>
+    <node x="0.0" y="461.0">java.lang.Throwable.SentinelHolder</node>
+    <node x="396.8499999999999" y="904.0">org.apache.ibatis.datasource.DataSourceException</node>
+    <node x="271.0" y="1004.0">org.apache.ibatis.datasource.pooled.PoolState</node>
+    <node x="1267.75" y="80.0">javax.sql.DataSource</node>
+    <node x="978.0" y="1084.0">org.apache.ibatis.datasource.jndi.JndiDataSourceFactory</node>
+    <node x="1030.5" y="194.5">org.apache.ibatis.datasource.unpooled.UnpooledDataSource</node>
+    <node x="683.5" y="485.0">java.lang.Throwable.PrintStreamOrWriter</node>
+    <node x="1102.5" y="518.0">org.apache.ibatis.datasource.unpooled.UnpooledDataSource.DriverProxy</node>
+    <node x="705.0" y="1258.0">org.apache.ibatis.datasource.pooled.PooledDataSourceFactory</node>
+    <node x="1199.75" y="0.0">java.sql.Wrapper</node>
+    <node x="505.3033333333333" y="706.5">java.lang.SuppressWarnings</node>
+    <node x="237.49999999999994" y="601.5">java.lang.Deprecated</node>
+    <node x="581.5" y="589.0">java.lang.Throwable.WrappedPrintWriter</node>
+    <node x="385.5" y="589.0">java.lang.RuntimeException</node>
+    <node x="386.0" y="472.5">java.lang.Exception</node>
+    <node x="793.5" y="589.0">java.lang.Throwable.WrappedPrintStream</node>
+    <node x="575.25" y="0.0">java.io.Serializable</node>
+    <node x="0.0" y="1084.0">org.apache.ibatis.datasource.pooled.PooledConnection</node>
+    <node x="310.3033333333333" y="694.0">org.apache.ibatis.exceptions.IbatisException</node>
+    <node x="684.0" y="1095.5">org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory</node>
+    <node x="1323.75" y="0.0">javax.sql.CommonDataSource</node>
+    <node x="21.0" y="1004.0">java.lang.reflect.InvocationHandler</node>
+    <node x="861.5" y="1004.0">org.apache.ibatis.datasource.DataSourceFactory</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.ibatis.datasource.jndi.JndiDataSourceFactory" target="org.apache.ibatis.datasource.DataSourceFactory">
+      <point x="0.0" y="-62.0" />
+      <point x="1086.0" y="1059.0" />
+      <point x="999.5" y="1059.0" />
+      <point x="46.0" y="15.0" />
+    </edge>
+    <edge source="java.lang.Throwable.WrappedPrintWriter" target="java.lang.Throwable.PrintStreamOrWriter">
+      <point x="48.0" y="-27.5" />
+      <point x="725.5" y="564.0" />
+      <point x="733.5" y="564.0" />
+      <point x="-50.0" y="15.0" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.unpooled.UnpooledDataSource.DriverProxy" target="org.apache.ibatis.datasource.unpooled.UnpooledDataSource">
+      <point x="0.0" y="-27.5" />
+      <point x="0.0" y="119.5" />
+    </edge>
+    <edge source="org.apache.ibatis.exceptions.PersistenceException" target="java.lang.SuppressWarnings">
+      <point x="52.0" y="-27.5" />
+      <point x="548.8499999999999" y="774.0" />
+      <point x="593.3033333333333" y="774.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="javax.sql.DataSource" target="javax.sql.CommonDataSource">
+      <point x="32.0" y="-15.0" />
+      <point x="1363.75" y="55.0" />
+      <point x="1411.75" y="55.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="java.lang.Throwable" target="java.io.Serializable">
+      <point x="0.0" y="-165.5" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory" target="org.apache.ibatis.datasource.DataSourceFactory">
+      <point x="0.0" y="-50.5" />
+      <point x="821.0" y="1059.0" />
+      <point x="907.5" y="1059.0" />
+      <point x="-46.0" y="15.0" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.unpooled.UnpooledDataSource" target="javax.sql.DataSource">
+      <point x="0.0" y="-119.5" />
+      <point x="1170.5" y="135.0" />
+      <point x="1299.75" y="135.0" />
+      <point x="-32.0" y="15.0" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.pooled.PooledDataSourceFactory" target="org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory">
+      <point x="0.0" y="-15.0" />
+      <point x="0.0" y="50.5" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.pooled.PooledDataSource" target="javax.sql.DataSource">
+      <point x="0.0" y="-154.0" />
+      <point x="1493.0" y="135.0" />
+      <point x="1363.75" y="135.0" />
+      <point x="32.0" y="15.0" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.pooled.PooledConnection" target="java.lang.reflect.InvocationHandler">
+      <point x="0.0" y="-142.5" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="java.lang.Throwable.SentinelHolder" target="java.lang.Throwable">
+      <point x="0.0" y="-39.0" />
+      <point x="183.0" y="431.0" />
+      <point x="530.45" y="431.0" />
+      <point x="-116.79999999999995" y="165.5" />
+    </edge>
+    <edge source="org.apache.ibatis.exceptions.IbatisException" target="java.lang.Deprecated">
+      <point x="-43.75" y="-27.5" />
+      <point x="354.0533333333333" y="669.0" />
+      <point x="301.49999999999994" y="669.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="java.lang.RuntimeException" target="java.lang.Exception">
+      <point x="0.0" y="-27.5" />
+      <point x="0.0" y="27.5" />
+    </edge>
+    <edge source="java.lang.Exception" target="java.lang.Throwable">
+      <point x="0.0" y="-27.5" />
+      <point x="473.5" y="441.0" />
+      <point x="588.85" y="441.0" />
+      <point x="-58.39999999999998" y="165.5" />
+    </edge>
+    <edge source="org.apache.ibatis.exceptions.PersistenceException" target="org.apache.ibatis.exceptions.IbatisException">
+      <point x="-52.0" y="-27.5" />
+      <point x="444.84999999999997" y="774.0" />
+      <point x="397.8033333333333" y="774.0" />
+      <point x="0.0" y="27.5" />
+    </edge>
+    <edge source="java.lang.Throwable.WrappedPrintStream" target="java.lang.Throwable">
+      <point x="48.0" y="-27.5" />
+      <point x="937.5" y="564.0" />
+      <point x="919.75" y="564.0" />
+      <point x="919.75" y="431.0" />
+      <point x="764.05" y="431.0" />
+      <point x="116.79999999999995" y="165.5" />
+    </edge>
+    <edge source="org.apache.ibatis.exceptions.IbatisException" target="java.lang.RuntimeException">
+      <point x="43.75" y="-27.5" />
+      <point x="441.5533333333333" y="669.0" />
+      <point x="473.5" y="669.0" />
+      <point x="0.0" y="27.5" />
+    </edge>
+    <edge source="org.apache.ibatis.datasource.DataSourceException" target="org.apache.ibatis.exceptions.PersistenceException">
+      <point x="5.6843418860808015E-14" y="-27.5" />
+      <point x="0.0" y="27.5" />
+    </edge>
+    <edge source="java.lang.Throwable.PrintStreamOrWriter" target="java.lang.Throwable">
+      <point x="0.0" y="-15.0" />
+      <point x="783.5" y="441.0" />
+      <point x="705.65" y="441.0" />
+      <point x="58.39999999999998" y="165.5" />
+    </edge>
+    <edge source="javax.sql.DataSource" target="java.sql.Wrapper">
+      <point x="-32.0" y="-15.0" />
+      <point x="1299.75" y="55.0" />
+      <point x="1251.75" y="55.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="java.lang.Throwable.WrappedPrintWriter" target="java.lang.Throwable">
+      <point x="-48.0" y="-27.5" />
+      <point x="629.5" y="564.0" />
+      <point x="647.25" y="564.0" />
+      <point x="0.0" y="165.5" />
+    </edge>
+    <edge source="java.lang.Throwable.WrappedPrintStream" target="java.lang.Throwable.PrintStreamOrWriter">
+      <point x="-48.0" y="-27.5" />
+      <point x="841.5" y="564.0" />
+      <point x="833.5" y="564.0" />
+      <point x="50.0" y="15.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.265946724262059" x="840.3535254101447" y="631.081527880043" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

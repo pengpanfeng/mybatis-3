@@ -100,37 +100,91 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class Configuration {
 
   protected Environment environment;
-
+  //是否允许在嵌套语句中使用分页（RowBounds）。
+  // 如果允许使用则设置为 false。	true | false	False
   protected boolean safeRowBoundsEnabled;
+  //  是否允许在嵌套语句中使用结果处理器（ResultHandler）。
+  //  如果允许使用则设置为 false。	true | false	True
   protected boolean safeResultHandlerEnabled = true;
+  //  是否开启驼峰命名自动映射，即从经典数据库列名 A_COLUMN 映射到经典 Java 属性名 aColumn。
+  //  true | false	False
   protected boolean mapUnderscoreToCamelCase;
+  //开启时，任一方法的调用都会加载该对象的所有延迟加载属性。
+  //否则，每个延迟加载属性会按需加载（参考 lazyLoadTriggerMethods)。	true | false	false （在 3.4.1 及之前的版本中默认为 true）
   protected boolean aggressiveLazyLoading;
+  //是否允许单个语句返回多结果集（需要数据库驱动支持）。	true | false	true
   protected boolean multipleResultSetsEnabled = true;
+  //useGeneratedKeys	允许 JDBC 支持自动生成主键，需要数据库驱动支持。如果设置为 true，将强制使用自动生成主键。
+  // 尽管一些数据库驱动不支持此特性，但仍可正常工作（如 Derby）。	true | false	False
   protected boolean useGeneratedKeys;
   protected boolean useColumnLabel = true;
+  //全局性地开启或关闭所有映射器配置文件中已配置的任何缓存。	true | false	true
   protected boolean cacheEnabled = true;
+  //指定当结果集中值为 null 的时候是否调用映射对象的 setter（map 对象时为 put）方法，这在依赖于 Map.keySet() 或 null 值进行初始化时比较有用。
+  // 注意基本类型（int、boolean 等）是不能设置成 null 的。	true | false	false
   protected boolean callSettersOnNulls;
+  //允许使用方法签名中的名称作为语句参数名称。
+  // 为了使用该特性，你的项目必须采用 Java 8 编译，并且加上 -parameters 选项。
+  // （新增于 3.4.1）	true | false	true
   protected boolean useActualParamName = true;
+  //当返回行的所有列都是空时，MyBatis默认返回 null。
+  // 当开启这个设置时，MyBatis会返回一个空实例。
+  // 请注意，它也适用于嵌套的结果集（如集合或关联）。（
+  // 新增于 3.4.2）	true | false	false
   protected boolean returnInstanceForEmptyRow;
-
+  //指定 MyBatis 增加到日志名称的前缀。	任何字符串	未设置
   protected String logPrefix;
+  //指定 MyBatis 所用日志的具体实现，未指定时将自动查找。
+  // SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING	未设置
   protected Class <? extends Log> logImpl;
+  //指定 VFS 的实现	自定义 VFS 的实现的类全限定名，以逗号分隔。	未设置
   protected Class <? extends VFS> vfsImpl;
+  // MyBatis 利用本地缓存机制（Local Cache）防止循环引用和加速重复的嵌套查询。 默认值为 SESSION，会缓存一个会话中执行的所有查询。
+  // 若设置值为 STATEMENT，本地缓存将仅用于执行语句，对相同 SqlSession 的不同查询将不会进行缓存。	SESSION | STATEMENT	SESSION
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+  //当没有为参数指定特定的 JDBC 类型时，空值的默认 JDBC 类型。
+  // 某些数据库驱动需要指定列的 JDBC 类型，多数情况直接用一般类型即可，比如 NULL、VARCHAR 或 OTHER。
+  // JdbcType 常量，常用值：NULL、VARCHAR 或 OTHER。	OTHER
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+  //指定对象的哪些方法触发一次延迟加载。
+  // 用逗号分隔的方法列表。
+  // equals,clone,hashCode,toString
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+  //设置超时时间，它决定数据库驱动等待数据库响应的秒数。
+  // 任意正整数	未设置 (null)
   protected Integer defaultStatementTimeout;
+  //  为驱动的结果集获取数量（fetchSize）设置一个建议值。
+  //  此参数只可以在查询设置中被覆盖。
+  //  任意正整数	未设置 (null)
   protected Integer defaultFetchSize;
+  //配置默认的执行器。
+  // SIMPLE 就是普通的执行器；
+  // REUSE 执行器会重用预处理语句（PreparedStatement）；
+  // BATCH 执行器不仅重用语句还会执行批量更新。
+  // SIMPLE REUSE BATCH	SIMPLE
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+  //指定 MyBatis 应如何自动映射列到字段或属性。
+  // NONE 表示关闭自动映射；
+  // PARTIAL 只会自动映射没有定义嵌套结果映射的字段。
+  // FULL 会自动映射任何复杂的结果集（无论是否嵌套）。
+  // NONE, PARTIAL, FULL	PARTIAL
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+  //  指定发现自动映射目标未知列（或未知属性类型）的行为。
+  //  NONE: 不做任何反应
+  //  WARNING: 输出警告日志（'org.apache.ibatis.session.AutoMappingUnknownColumnBehavior' 的日志等级必须设置为 WARN）
+  //  FAILING: 映射失败 (抛出 SqlSessionException)
+  //  NONE, WARNING, FAILING	NONE
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
   protected Properties variables = new Properties();
   protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
-
+  //延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。
+  // 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。	true | false	false
   protected boolean lazyLoadingEnabled = false;
+  //指定 Mybatis 创建可延迟加载对象所用到的代理工具。
+  // CGLIB | JAVASSIST	JAVASSIST （MyBatis 3.3 以上）
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
   protected String databaseId;
@@ -140,11 +194,19 @@ public class Configuration {
    *
    * @see <a href='https://code.google.com/p/mybatis/issues/detail?id=300'>Issue 300 (google code)</a>
    */
+  //指定一个提供 Configuration 实例的类。
+  // 这个被返回的 Configuration 实例用来加载被反序列化对象的延迟加载属性值。
+  // 这个类必须包含一个签名为static Configuration getConfiguration() 的方法。（新增于 3.2.3）	一个类型别名或完全限定类名。	未设置
   protected Class<?> configurationFactory;
 
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
   protected final InterceptorChain interceptorChain = new InterceptorChain();
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  /**
+   * 别名注册器
+   * 1、TypeAliasRegistry构造防范中注册基本数据类型、集合、常见方法的别名
+   * 2、Configuration构造方法中注册常用数据源、缓存、日志、动态代理、XML解析驱动、raw语法校验驱动
+   */
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
@@ -152,6 +214,9 @@ public class Configuration {
       .conflictMessageProducer((savedValue, targetValue) ->
           ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+  /**
+   * 结果集映射容器
+   */
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
@@ -159,8 +224,17 @@ public class Configuration {
   protected final Set<String> loadedResources = new HashSet<>();
   protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
+  /**
+   * StatementBuilder构建者列表 存放解析异常的 StatementBuilder
+   */
   protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
+  /**
+   * CacheRefResolver解析列表 存放解析异常的CacheRefResolver
+   */
   protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
+  /**
+   * ResultMapResolver解析列表 存放解析异常的ResultMapResolver
+   */
   protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
   protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
@@ -177,14 +251,18 @@ public class Configuration {
   }
 
   public Configuration() {
+
+    // 注册事务工厂的别名
     typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
     typeAliasRegistry.registerAlias("MANAGED", ManagedTransactionFactory.class);
-
+    // 注册JNDI数据源的别名
     typeAliasRegistry.registerAlias("JNDI", JndiDataSourceFactory.class);
+    // 注册数据源的别名
     typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
     typeAliasRegistry.registerAlias("UNPOOLED", UnpooledDataSourceFactory.class);
 
     typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
+    // 注册缓存策略的别名
     typeAliasRegistry.registerAlias("FIFO", FifoCache.class);
     typeAliasRegistry.registerAlias("LRU", LruCache.class);
     typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
@@ -195,6 +273,7 @@ public class Configuration {
     typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
     typeAliasRegistry.registerAlias("RAW", RawLanguageDriver.class);
 
+    // 注册日志类的别名
     typeAliasRegistry.registerAlias("SLF4J", Slf4jImpl.class);
     typeAliasRegistry.registerAlias("COMMONS_LOGGING", JakartaCommonsLoggingImpl.class);
     typeAliasRegistry.registerAlias("LOG4J", Log4jImpl.class);
@@ -203,6 +282,7 @@ public class Configuration {
     typeAliasRegistry.registerAlias("STDOUT_LOGGING", StdOutImpl.class);
     typeAliasRegistry.registerAlias("NO_LOGGING", NoLoggingImpl.class);
 
+    // 注册动态代理工厂的别名
     typeAliasRegistry.registerAlias("CGLIB", CglibProxyFactory.class);
     typeAliasRegistry.registerAlias("JAVASSIST", JavassistProxyFactory.class);
 
@@ -560,6 +640,7 @@ public class Configuration {
   }
 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+    //创建StatementHandler委托者，根据StatementType创建不同的委托者
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
     return statementHandler;
@@ -573,16 +654,34 @@ public class Configuration {
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
+
     if (ExecutorType.BATCH == executorType) {
+      /**
+       *创建批量执行器
+       */
       executor = new BatchExecutor(this, transaction);
     } else if (ExecutorType.REUSE == executorType) {
+      /**
+       *
+       */
+      //TODO 需要进一步细化
       executor = new ReuseExecutor(this, transaction);
     } else {
+      /**
+       * 创建简单执行器
+       */
       executor = new SimpleExecutor(this, transaction);
     }
+    //判断是否开启缓存
     if (cacheEnabled) {
+      /**
+       *如果开启缓存值通过CachingExecutor代理executor，同时记录缓存信息
+       */
       executor = new CachingExecutor(executor);
     }
+    /**
+     * 通过Plugin.wrap动态代理将插件的拦截器植入到executor中
+     */
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }
@@ -739,10 +838,12 @@ public class Configuration {
   }
 
   public void addMappers(String packageName) {
+    //调用addMappers(String packageName)中间方法注册Mapper
     mapperRegistry.addMappers(packageName);
   }
 
   public <T> void addMapper(Class<T> type) {
+    // 通过 MapperRegistry 绑定 mapper 类
     mapperRegistry.addMapper(type);
   }
 

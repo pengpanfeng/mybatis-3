@@ -46,8 +46,10 @@ public class XMLIncludeTransformer {
     Properties variablesContext = new Properties();
     Properties configurationVariables = configuration.getVariables();
     if (configurationVariables != null) {
+      // 将 configurationVariables 中的数据添加到 variablesContext 中
       variablesContext.putAll(configurationVariables);
     }
+    // 调用重载方法处理 <include> 节点
     applyIncludes(source, variablesContext, false);
   }
 
@@ -57,17 +59,67 @@ public class XMLIncludeTransformer {
    * @param variablesContext Current context for static variables with values
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
+    /**
+     * <sql id="table">
+     *  ${table_name}
+     * </sql>
+     *
+     * <select id="findOne" resultType="User">
+     *  SELECT id, title FROM
+     * <include refid="table">
+     *    <property name="table_name" value="article"/>
+     * </include>
+     *  WHERE id = #{id}
+     * </select>
+     */
     if (source.getNodeName().equals("include")) {
+      // 获取 <sql> 节点。若 refid 中包含属性占位符 ${}，
+      // 则需先将属性占位符替换为对应的属性值
+      /**
+       * toInclude1
+       * <sql id="table">
+       *  ${table_name}
+       *  </sql>
+       */
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
+
+      /**
+       * 解析<include>的子节点<property>，并将解析结果与 variablesContext 融合，
+       * 然后返回融合后的 Properties。若 <property> 节点的 value 属性中存在占位符 ${}，则将占位符替换为对应的属性值
+       *
+       * toIncludeContext1=[{table_name:article}]
+       */
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
+      /**
+       * 这里是一个递归调用，用于将 <sql> 节点内容中出现的属性占位符 ${}
+       * 替换为对应的属性值。这里要注意一下递归调用的参数：
+       *
+       * - toInclude：<sql> 节点对象
+       * - toIncludeContext：<include> 子节点 <property> 的解析结果与
+       * 全局变量融合后的结果
+       *
+       *<sql id="table">
+       * ${table_name} -> article
+       *</sql>
+       * 递归调用直到include中属性被处理完，后进行后序sql node 替换include node
+       */
       applyIncludes(toInclude, toIncludeContext, true);
+
+      /**
+       * 如果 <sql> 和 <include> 节点不在一个文档中，
+       * 则从其他文档中将 <sql> 节点引入到 <include> 所在文档中
+       */
       if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
         toInclude = source.getOwnerDocument().importNode(toInclude, true);
       }
+
+      // 将 <include> 节点替换为 <sql> 节点
       source.getParentNode().replaceChild(toInclude, source);
       while (toInclude.hasChildNodes()) {
         toInclude.getParentNode().insertBefore(toInclude.getFirstChild(), toInclude);
       }
+      // 前面已经将 <sql> 节点的内容插入到 dom 中了，
+      // 现在不需要 <sql> 节点了，这里将该节点从 dom 中移除
       toInclude.getParentNode().removeChild(toInclude);
     } else if (source.getNodeType() == Node.ELEMENT_NODE) {
       if (included && !variablesContext.isEmpty()) {
@@ -75,16 +127,19 @@ public class XMLIncludeTransformer {
         NamedNodeMap attributes = source.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
           Node attr = attributes.item(i);
+          // 将 source 节点属性中的占位符 ${} 替换成具体的属性值
           attr.setNodeValue(PropertyParser.parse(attr.getNodeValue(), variablesContext));
         }
       }
       NodeList children = source.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
+        // 递归调用
         applyIncludes(children.item(i), variablesContext, included);
       }
     } else if (included && source.getNodeType() == Node.TEXT_NODE
         && !variablesContext.isEmpty()) {
       // replace variables in text node
+      // 将文本（text）节点中的属性占位符 ${} 替换成具体的属性值
       source.setNodeValue(PropertyParser.parse(source.getNodeValue(), variablesContext));
     }
   }
@@ -93,6 +148,7 @@ public class XMLIncludeTransformer {
     refid = PropertyParser.parse(refid, variables);
     refid = builderAssistant.applyCurrentNamespace(refid, true);
     try {
+      //在configuration中sqlFragments寻找key为refid的xnode节点<sql> name,age </sql>
       XNode nodeToInclude = configuration.getSqlFragments().get(refid);
       return nodeToInclude.getNode().cloneNode(true);
     } catch (IllegalArgumentException e) {
