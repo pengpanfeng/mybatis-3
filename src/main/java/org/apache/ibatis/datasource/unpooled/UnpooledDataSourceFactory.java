@@ -25,6 +25,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
+ * 通过无参构造方法创建UnpooledDataSource数据源
+ *
  * @author Clinton Begin
  */
 public class UnpooledDataSourceFactory implements DataSourceFactory {

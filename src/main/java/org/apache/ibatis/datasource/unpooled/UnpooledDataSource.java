@@ -245,6 +245,9 @@ public class UnpooledDataSource implements DataSource {
         }
     }
 
+    /**
+     * 代理原生驱动
+     */
     private static class DriverProxy implements Driver {
         private Driver driver;
 
